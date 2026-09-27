@@ -3,3 +3,4 @@ mingit/
 __pycache__/
 *.pyc
 .env
+test_all.py
