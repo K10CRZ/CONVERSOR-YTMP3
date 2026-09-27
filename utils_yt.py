@@ -49,14 +49,16 @@ def get_common_ydl_opts():
         'no_warnings': True,
         'geo_bypass': True,
         'geo_bypass_country': 'BR',
+        'geo_bypass_ip_block': '177.136.0.0/16',
         'extractor_args': {
             'youtube': {
-                'player_client': ['android', 'ios', 'mweb', 'web_creator']
+                'player_client': ['android', 'ios', 'mweb', 'web']
             }
         },
         'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
             'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+            'X-Forwarded-For': '177.136.0.1',
         }
     }
     cookie_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cookies.txt")
