@@ -43,14 +43,27 @@ def format_duration(seconds):
         return f"{hours:02d}:{minutes:02d}:{secs:02d}"
     return f"{minutes:02d}:{secs:02d}"
 
+def get_common_ydl_opts():
+    opts = {
+        'quiet': True,
+        'no_warnings': True,
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android', 'ios', 'mweb', 'web_creator']
+            }
+        }
+    }
+    cookie_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cookies.txt")
+    if os.path.exists(cookie_file):
+        opts['cookiefile'] = cookie_file
+    return opts
+
 def get_video_info(url):
     """Obtém metadados do vídeo do YouTube sem baixar o arquivo."""
     ffmpeg_path = get_ffmpeg_path()
-    ydl_opts = {
-        'quiet': True,
-        'no_warnings': True,
-        'skip_download': True,
-    }
+    ydl_opts = get_common_ydl_opts()
+    ydl_opts['skip_download'] = True
+
     if ffmpeg_path:
         ydl_opts['ffmpeg_location'] = ffmpeg_path
 
@@ -82,7 +95,8 @@ def download_audio(url, quality="320", progress_hook=None):
 
     output_template = os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s')
 
-    ydl_opts = {
+    ydl_opts = get_common_ydl_opts()
+    ydl_opts.update({
         'format': 'bestaudio/best',
         'outtmpl': output_template,
         'writethumbnail': False,
@@ -93,10 +107,8 @@ def download_audio(url, quality="320", progress_hook=None):
                 'preferredquality': quality,
             }
         ],
-        'quiet': True,
-        'no_warnings': True,
         'restrictfilenames': False,
-    }
+    })
 
     if ffmpeg_path:
         ydl_opts['ffmpeg_location'] = ffmpeg_path
