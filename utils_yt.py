@@ -51,6 +51,10 @@ def get_common_ydl_opts():
             'youtube': {
                 'player_client': ['android', 'ios', 'mweb', 'web_creator']
             }
+        },
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
+            'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
         }
     }
     cookie_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cookies.txt")
