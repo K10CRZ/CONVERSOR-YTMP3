@@ -47,6 +47,8 @@ def get_common_ydl_opts():
     opts = {
         'quiet': True,
         'no_warnings': True,
+        'geo_bypass': True,
+        'geo_bypass_country': 'BR',
         'extractor_args': {
             'youtube': {
                 'player_client': ['android', 'ios', 'mweb', 'web_creator']

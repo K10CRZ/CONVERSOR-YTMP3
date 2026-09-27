@@ -110,18 +110,23 @@ def download():
 
 @app.route("/api/file/<path:filename>")
 def download_file(filename):
-    from urllib.parse import unquote
+    from urllib.parse import quote, unquote
+    import re
+    
     filename = unquote(filename)
     safe_name = filename if filename.lower().endswith('.mp3') else f"{filename}.mp3"
+    
+    ascii_clean = re.sub(r'[^a-zA-Z0-9_.-]', '_', safe_name)
+    encoded_utf8 = quote(safe_name)
     
     response = send_from_directory(
         DOWNLOAD_DIR, 
         filename, 
         as_attachment=True, 
-        download_name=safe_name,
         mimetype="audio/mpeg"
     )
     response.headers["Content-Type"] = "audio/mpeg"
+    response.headers["Content-Disposition"] = f"attachment; filename=\"{ascii_clean}\"; filename*=UTF-8''{encoded_utf8}"
     return response
 
 @app.route("/api/play/<path:filename>")
