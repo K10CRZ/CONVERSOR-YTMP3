@@ -1,0 +1,5 @@
+downloads/
+mingit/
+__pycache__/
+*.pyc
+.env

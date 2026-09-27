@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de YouTube para MP3 HD</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="background-glow">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-music"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>YT<span>MP3</span> Pro</h1>
+                    <span class="badge-hd">320 KBPS</span>
+                </div>
+            </div>
+            <button id="btnOpenFolderHeader" class="btn-secondary" title="Abrir pasta onde os arquivos são salvos">
+                <i class="fa-solid fa-folder-open"></i> Pasta de Downloads
+            </button>
+        </header>
+
+        <!-- Main Card -->
+        <main class="main-content">
+            <div class="glass-card converter-card">
+                <div class="card-header">
+                    <h2>Conversor do YouTube para MP3</h2>
+                    <p>Cole o link de qualquer vídeo ou música do YouTube para baixar em áudio MP3 de alta qualidade.</p>
+                </div>
+
+                <!-- Input Group -->
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i class="fa-brands fa-youtube input-icon"></i>
+                        <input type="text" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+                        <button id="btnPaste" class="btn-icon" title="Colar da área de transferência">
+                            <i class="fa-regular fa-paste"></i>
+                        </button>
+                    </div>
+                    <button id="btnFetchInfo" class="btn-primary">
+                        <i class="fa-solid fa-bolt"></i> Analisar Link
+                    </button>
+                </div>
+
+                <!-- Quality Selection -->
+                <div class="quality-selector">
+                    <span class="selector-label">Qualidade do Áudio:</span>
+                    <div class="quality-options">
+                        <label class="quality-pill active">
+                            <input type="radio" name="quality" value="320" checked>
+                            <span class="pill-badge">HD</span> 320 kbps
+                        </label>
+                        <label class="quality-pill">
+                            <input type="radio" name="quality" value="256">
+                            256 kbps
+                        </label>
+                        <label class="quality-pill">
+                            <input type="radio" name="quality" value="192">
+                            192 kbps
+                        </label>
+                        <label class="quality-pill">
+                            <input type="radio" name="quality" value="128">
+                            128 kbps
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Error Message Alert -->
+                <div id="alertBox" class="alert-box hidden">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span id="alertText">Ocorreu um erro ao carregar o vídeo.</span>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div id="infoLoader" class="loader-box hidden">
+                    <div class="spinner"></div>
+                    <span>Analisando vídeo do YouTube...</span>
+                </div>
+
+                <!-- Video Preview Card -->
+                <div id="videoPreview" class="preview-card hidden">
+                    <div class="preview-thumbnail">
+                        <img id="thumbImg" src="" alt="Thumbnail do vídeo">
+                        <span id="thumbDuration" class="duration-badge">00:00</span>
+                    </div>
+                    <div class="preview-info">
+                        <h3 id="videoTitle">Título do Vídeo</h3>
+                        <p id="videoAuthor" class="author-name"><i class="fa-regular fa-user"></i> Nome do Canal</p>
+                        <div class="preview-actions">
+                            <button id="btnStartDownload" class="btn-action">
+                                <i class="fa-solid fa-download"></i> Converter e Baixar MP3
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Progress Bar -->
+                <div id="progressContainer" class="progress-box hidden">
+                    <div class="progress-header">
+                        <span id="progressStatusText"><i class="fa-solid fa-circle-notch fa-spin"></i> Baixando e convertendo áudio...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="progressBar" class="progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- Success / Download Result Card -->
+                <div id="resultCard" class="result-card hidden">
+                    <div class="result-icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div class="result-details">
+                        <h3>Áudio Convertido com Sucesso!</h3>
+                        <p id="resultFileName" class="result-filename">musica.mp3</p>
+                        
+                        <!-- Embedded Audio Player -->
+                        <div class="audio-player-wrapper">
+                            <audio id="audioPlayer" controls></audio>
+                        </div>
+
+                        <div class="result-buttons">
+                            <a id="btnDownloadFile" href="#" class="btn-success" download>
+                                <i class="fa-solid fa-file-arrow-down"></i> Baixar MP3
+                            </a>
+                            <button id="btnOpenFolder" class="btn-secondary">
+                                <i class="fa-regular fa-folder-open"></i> Abrir Pasta
+                            </button>
+                            <button id="btnReset" class="btn-outline">
+                                <i class="fa-solid fa-rotate-right"></i> Novo Link
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Section -->
+            <div class="glass-card history-card">
+                <div class="history-header">
+                    <h3><i class="fa-solid fa-clock-rotate-left"></i> Histórico de Conversões</h3>
+                    <button id="btnRefreshHistory" class="btn-icon-small" title="Atualizar lista">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </button>
+                </div>
+                <div id="historyList" class="history-list">
+                    <div class="empty-history">
+                        <i class="fa-solid fa-music"></i>
+                        <p>Nenhum áudio convertido recentemente.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>YTMP3 Pro &bull; Conversor local rápido e seguro &bull; Sem propagandas</p>
+        </footer>
+    </div>
+
+    <!-- Script -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
