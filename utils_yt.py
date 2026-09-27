@@ -139,7 +139,35 @@ def download_audio(url, quality="320", progress_hook=None):
         clean_filename = f"{safe_title}.mp3"
         clean_filepath = os.path.join(DOWNLOAD_DIR, clean_filename)
         
-        if latest_file != clean_filepath:
+        # Executar passe de conversão ID3v2.3 com LAME MP3 44100Hz stereo para 100% de compatibilidade com o Windows
+        if ffmpeg_path:
+            try:
+                temp_output = os.path.join(DOWNLOAD_DIR, f"fixed_{os.getpid()}_{clean_filename}")
+                cmd = [
+                    ffmpeg_path,
+                    '-y',
+                    '-i', latest_file,
+                    '-acodec', 'libmp3lame',
+                    '-ab', f'{quality}k',
+                    '-ar', '44100',
+                    '-ac', '2',
+                    '-id3v2_version', '3',
+                    temp_output
+                ]
+                import subprocess
+                subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                
+                if os.path.exists(temp_output) and os.path.getsize(temp_output) > 0:
+                    if os.path.exists(latest_file):
+                        os.remove(latest_file)
+                    if os.path.exists(clean_filepath):
+                        os.remove(clean_filepath)
+                    os.rename(temp_output, clean_filepath)
+                    latest_file = clean_filepath
+            except Exception as e:
+                print(f"[AVISO] Não foi possível aplicar passe ID3v2.3: {e}")
+
+        if latest_file != clean_filepath and os.path.exists(latest_file):
             try:
                 if os.path.exists(clean_filepath):
                     os.remove(clean_filepath)
